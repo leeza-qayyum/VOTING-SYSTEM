@@ -74,7 +74,60 @@ public:
 		else return false;
 	}
 };
-
+class candidate
+{
+	string name;
+	string party;
+	int votes;
+public:
+	candidate()
+	{
+		name = " ";
+		party = " ";
+		votes = 0;
+	}
+	candidate(string n, string p, int v)
+	{
+		name = n;
+		party = p;
+		votes = v;
+	}
+	candidate(candidate& c)
+	{
+		name = c.name;
+		party = c.party;
+		votes = c.votes;
+	}
+	void operator =(candidate c)
+	{
+		this->name = c.name;
+		this->party = c.party;
+		this->votes = c.votes;
+	}
+	void setname(string n)
+	{
+		name = n;
+	}
+	void setparty(string p)
+	{
+		party = p;
+	}
+	string getname() const
+	{
+		return name;
+	}
+	string getparty() const
+	{
+		return party;
+	}
+	int getvotes() const
+	{
+		return votes;
+	}
+	void incrementvotes()
+	{
+		votes++;
+	}
 int main() {
 	int mainChoice;
 
@@ -134,7 +187,9 @@ int main() {
 					cin >> choice;
 					switch (choice)
 					{
-
+					case 1:
+					{
+						cout << "National Election\n";
 					}
 				} while (choice == 3);
 			}
