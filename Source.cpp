@@ -128,6 +128,63 @@ public:
 	{
 		votes++;
 	}
+};
+const int maximum_cand = 100;
+class election {
+private:
+	int electionid;
+	string electionname;
+	candidate candidates[maximum_cand];
+	int candidatecount;
+	int startdate;
+	int enddate;
+public:
+	election() {
+		electionid = 0;
+		electionname = " ";
+		startdate = 0;
+		enddate = 0;
+	}
+	election(int i, string n, int a, int b) :candidatecount(0) {
+		electionid = 0;
+		electionname = " ";
+		startdate = a;
+		enddate = b;
+	}
+	election(election& other) {
+		electionid = other.id;
+		electionname = other.electionname;
+	}
+	void operator=(election& other) {
+		this->electionid = other.electionid;
+		this->electionname = other.electionname;
+	}
+	void setid(int i) {
+		this->electionid = i;
+	}
+	void setelectionname(string n) {
+		this->electionname = n;
+	}
+	int getid() const {
+		return electionid;
+	}
+	string getelectionname()const {
+		return electionname;
+	}
+	void setstartdate(int a) {
+		this->startdate = a;
+	}
+	void setenddate(int b) {
+		this->enddate = b;
+	}
+	int getstartdate()const {
+		return startdate;
+	}
+	int getenddate()const {
+		return enddate;
+	}
+
+};
 int main() {
 	int mainChoice;
 
