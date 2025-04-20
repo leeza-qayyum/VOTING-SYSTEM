@@ -210,6 +210,67 @@ public:
 	virtual void displaycandidates() = 0;
 	virtual void Result() = 0;
 };
+class LocalElection :public election {
+	voters v;
+public:
+	void displaycandidates() override
+	{
+		ifstream file("candidates.txt");
+		string region;
+		string name;
+		string party; int votes;
+		if (file)
+		{
+			while (file >> name >> party >> votes >> region)
+				if (region == "Lahore")
+				{
+					cout << "The Candidates of Lahore are Following.\n";
+					while (region == "Lahore")
+					{
+						for (int i = 0; i < 4; i++)
+						{
+							cout << i << "." << name << endl;
+						}
+					}
+				}
+				else if (region == "Gujranwala")
+				{
+					cout << "The Candidates of Lahore are Following.\n";
+					while (region == "Gujranwala")
+					{
+						for (int i = 0; i < 4; i++)
+						{
+							cout << i << "." << name << endl;
+						}
+					}
+				}
+				else if (region == "Multan")
+				{
+					cout << "The Candidates of Lahore are Following.\n";
+					while (region == "Multan")
+					{
+						for (int i = 0; i < 4; i++)
+						{
+							cout << i << "." << name << endl;
+						}
+					}
+				}
+				else if (region == "Faislabad")
+				{
+					cout << "The Candidates of Lahore are Following.\n";
+					while (region == "Faislabad")
+					{
+						for (int i = 0; i < 4; i++)
+						{
+							cout << i << "." << name << endl;
+						}
+					}
+				}
+		}
+		else cout << "No candidates are running for your region\n";
+	}
+	void Result() {}
+};
 int main() {
 	int mainChoice;
 
@@ -284,6 +345,8 @@ int main() {
 							do {
 								if (choose == 1) {
 
+									LocalElection l;
+									l.displaycandidates();
 								}
 								else if (choose == 2) {}
 								else if (choose == 3) {}
