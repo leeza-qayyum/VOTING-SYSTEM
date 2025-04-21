@@ -73,8 +73,47 @@ public:
 		}
 		else return false;
 	}
-	bool castvote() {
+	void castvote(string filename) {
+		string n, p, r;
+		int v;
+		bool found = false;
+		string name;
+		ifstream file(filename);
+		ofstream temp("temp.txt");
 
+		if (!file || !temp) {
+			cout << "Error opening file.\n";
+			return;
+		}
+		cout << "Enter name of canidate you wanna cast vote for "; cin >> name;
+		while (file >> n >> p >> r >> v) {
+			if (n == name) {
+				v++;
+				found = true;
+				cout << "Vote casted for " << n << " in region " << r << ".\n";
+			}
+			temp << n << " " << p << " " << r << " " << v << "\n";
+		}
+
+		file.close();
+		temp.close();
+
+		remove(filename.c_str());
+		rename("temp.txt", filename.c_str());
+
+		if (found) {
+			ofstream infile("votes.txt", ios::app);
+			if (infile) {
+				infile << name << " " << r << " " << v << "\n";
+				infile.close();
+			}
+			else {
+				cout << "Error writing to votes.txt\n";
+			}
+		}
+		else {
+			cout << "The following candidate is not running for this seat.\n";
+		}
 	}
 };
 class candidate
@@ -331,7 +370,9 @@ int main() {
 								if (choose == 1) {
 
 									LocalElection l;
+									l.diplayShedule();
 									l.displaycandidates();
+									v.castvote("Local.txt");
 								}
 								else if (choose == 2) {}
 								else if (choose == 3) {}
