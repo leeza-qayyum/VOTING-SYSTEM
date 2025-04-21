@@ -73,9 +73,6 @@ public:
 		}
 		else return false;
 	}
-	bool castvote() {
-
-	}
 };
 class candidate
 {
@@ -127,88 +124,66 @@ public:
 	{
 		return votes;
 	}
-};
-class administrator :public user {
-public:
-	administrator() {}
-	administrator(string n, int p, long long c) :user(n, p, c) {}
-	bool registeration() override {
-		string n; int p; long long c;
-		cout << "Enter name of admin"; cin >> n;
-		cout << "Enter password"; cin >> p;
-		cout << "Enter cnic"; cin >> c;
-		ofstream file("admin.txt", ios::app);
-		if (file) {
-			file << n << " " << p << " " << c << "\n";
-			return true;
-		}
-		return false;
-
-	}
-	bool login() override {
-		ifstream file("admin.txt");
-		string sn; int sp; long long sc;
-		if (file) {
-			string n; int p; long long c;
-			cout << "Enter your name "; cin >> n;
-			cout << "Enter password "; cin >> p;
-			cout << "Enter your CNIC "; cin >> c;
-			while (file >> sn >> sp >> sc) {
-				if (n == sn && p == sp && c == sc) {
-					return true;
-				}
-			}
-		}
-		else if (!file) {
-			bool q = registeration();
-			if (q) {
-				cout << "Admin is register" << endl;
-				return true;
-			}
-			else cout << "Registeration failed" << endl;
-		}
-		else return false;
-	}
-	void addcandidate() {
-		candidate  c;
-		ofstream file("candidates.txt", ios::app);
-		if (file) {
-			string n; string p; string r;
-			cout << "Enter Candidate name"; cin >> n;
-			cout << "Enter Party affiliation"; cin >> p;
-			cout << "Enter the region in which in which candidate is running"; cin >> r;
-			c.setname(n); c.setparty(p);
-			file << c.getname() << " " << c.getparty() << " " << r << "\n";
-			file.close();
-			cout << "Candidate added successfully." << endl;
-		}
-		else {
-			cout << "Error adding candidate." << endl;
-		}
-	}
-	void displayresult() {
-		string region;
-		cout << "Enter region name you wanna see result"; cin >> region;
-		ifstream file("candidates.txt");
-		string name, party, reg;
-		if (file) {
-			while (file >> name >> party >> reg) {
-				if (reg == region) {
-					cout << name << "    " << party << endl;
-				}
-			}
-			file.close();
-		}
-		else {
-			cout << "Error reading candidates." << endl;
-		}
+	void incrementvotes()
+	{
+		votes++;
 	}
 };
+const int maximum_cand = 100;
 class election {
+private:
+	int electionid;
+	string electionname;
+	candidate candidates[maximum_cand];
+	int candidatecount;
+	int startdate;
+	int enddate;
 public:
+	election() {
+		electionid = 0;
+		electionname = " ";
+		startdate = 0;
+		enddate = 0;
+	}
+	election(int i, string n, int a, int b) :candidatecount(0) {
+		electionid = 0;
+		electionname = " ";
+		startdate = a;
+		enddate = b;
+	}
+	election(election& other) {
+		electionid = other.id;
+		electionname = other.electionname;
+	}
+	void operator=(election& other) {
+		this->electionid = other.electionid;
+		this->electionname = other.electionname;
+	}
+	void setid(int i) {
+		this->electionid = i;
+	}
+	void setelectionname(string n) {
+		this->electionname = n;
+	}
+	int getid() const {
+		return electionid;
+	}
+	string getelectionname()const {
+		return electionname;
+	}
+	void setstartdate(int a) {
+		this->startdate = a;
+	}
+	void setenddate(int b) {
+		this->enddate = b;
+	}
+	int getstartdate()const {
+		return startdate;
+	}
+	int getenddate()const {
+		return enddate;
+	}
 
-	virtual void displaycandidates() = 0;
-	virtual void Result() = 0;
 };
 int main() {
 	int mainChoice;
@@ -262,75 +237,22 @@ int main() {
 				int choice;
 				do
 				{
-					cout << "1.View Elections \n";
-					cout << "2.Logout\n";
+					cout << "Select the Election \n";
+					cout << "1.National Election\n";
+					cout << "2.Local Election\n";
+					cout << "3.Logout\n";
 					cin >> choice;
 					switch (choice)
 					{
 					case 1:
-						int election;
-						cout << "1. Local Elections\n";
-						cout << "2. National Elections\n";
-						cout << "3. Exit\n";
-						cout << "Choose election \n ";
-						cin >> election;
-						if (election == 1) {
-							int choose;
-							cout << "1. Cast your vote\n";
-							cout << "2.View your vote status\n";
-							cout << "3.View Vote Statistics\n";
-							cout << "4. Exit\n";
-							cin >> choose;
-							do {
-								if (choose == 1) {
-
-								}
-								else if (choose == 2) {}
-								else if (choose == 3) {}
-								else break;
-							} while (choose == 4);
-						}
-						else if (election == 2) {
-							int choose1;
-							cout << "1. Cast your vote\n";
-							cout << "2.View your vote status\n";
-							cout << "3.View Vote Statistics\n";
-							cout << "4. Exit\n";
-							cin >> choose1;
-							do {
-								if (choose1 == 1) {}
-								else if (choose1 == 2) {}
-								else if (choose1 == 3) {}
-								else break;
-							} while (choose1 == 4);
-						}
-						else break;
-						break;
-					case 2: break;
+					{
+						cout << "National Election\n";
 					}
-				} while (choice == 2);
+				} while (choice == 3);
 			}
 			else {
 				cout << "Login Failed";
 			}
-		}
-		else if (mainChoice == 3) {
-			administrator A;
-			bool status = A.login();
-			if (status) {
-				int choice;
-				cout << "1. Add Candidates" << endl;
-				cout << "2. Display Results" << endl;
-				cin >> choice;
-				switch (choice) {
-				case 1:
-					A.addcandidate();
-					break;
-				case 2:
-					A.displayresult();
-				}
-			}
-			else cout << "Login failed" << endl;
 		}
 	} while (mainChoice == 5);
 }
