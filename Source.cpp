@@ -169,16 +169,27 @@ public:
 		}
 		else return false;
 	}
-	void addcandidate() {
+	void createElection(string electionName) {
+		string filename = electionName + ".txt";
+		ofstream file(filename);
+		if (file) {
+			cout << "Election created successfully." << endl;
+			file.close();
+		}
+		else {
+			cout << "Error creating election." << endl;
+		}
+	}
+	void addcandidate(string filename) {
 		candidate  c;
-		ofstream file("candidates.txt", ios::app);
+		ofstream file(filename, ios::app);
 		if (file) {
 			string n; string p; string r;
 			cout << "Enter Candidate name"; cin >> n;
 			cout << "Enter Party affiliation"; cin >> p;
 			cout << "Enter the region in which in which candidate is running"; cin >> r;
 			c.setname(n); c.setparty(p);
-			file << c.getname() << " " << c.getparty() << " " << r << "\n";
+			file << c.getname() << " " << c.getparty() << " " << r << " " << c.getvotes() << "\n";
 			file.close();
 			cout << "Candidate added successfully." << endl;
 		}
@@ -186,10 +197,10 @@ public:
 			cout << "Error adding candidate." << endl;
 		}
 	}
-	void displayresult() {
+	void displayresult(string filename) {
 		string region;
 		cout << "Enter region name you wanna see result"; cin >> region;
-		ifstream file("candidates.txt");
+		ifstream file(filename);
 		string name, party, reg;
 		if (file) {
 			while (file >> name >> party >> reg) {
@@ -213,61 +224,35 @@ public:
 class LocalElection :public election {
 	voters v;
 public:
-	void displaycandidates() override
-	{
-		ifstream file("candidates.txt");
-		string region;
-		string name;
-		string party; int votes;
-		if (file)
-		{
-			while (file >> name >> party >> votes >> region)
-				if (region == "Lahore")
-				{
-					cout << "The Candidates of Lahore are Following.\n";
-					while (region == "Lahore")
-					{
-						for (int i = 0; i < 4; i++)
-						{
-							cout << i << "." << name << endl;
-						}
+	void displaycandidates() override {
+		string n, r;
+		int p;
+		long long c;
+		ifstream file("voters.txt");
+		if (file >> n >> p >> c >> r) {
+			ifstream infile("candidates.txt");
+			if (infile) {
+				string name, party, region;
+				int votes;
+				cout << "The Candidates of " << r << " are following:\n";
+				int i = 1;
+				while (infile >> name >> party >> region >> votes) {
+					if (region == r) {
+						cout << i << ". " << name << " (" << party << ")" << endl;
+						i++;
 					}
 				}
-				else if (region == "Gujranwala")
-				{
-					cout << "The Candidates of Lahore are Following.\n";
-					while (region == "Gujranwala")
-					{
-						for (int i = 0; i < 4; i++)
-						{
-							cout << i << "." << name << endl;
-						}
-					}
+				if (i == 1) {
+					cout << "No candidates found in this region." << endl;
 				}
-				else if (region == "Multan")
-				{
-					cout << "The Candidates of Lahore are Following.\n";
-					while (region == "Multan")
-					{
-						for (int i = 0; i < 4; i++)
-						{
-							cout << i << "." << name << endl;
-						}
-					}
-				}
-				else if (region == "Faislabad")
-				{
-					cout << "The Candidates of Lahore are Following.\n";
-					while (region == "Faislabad")
-					{
-						for (int i = 0; i < 4; i++)
-						{
-							cout << i << "." << name << endl;
-						}
-					}
-				}
+			}
+			else {
+				cout << "Error reading candidates file." << endl;
+			}
 		}
-		else cout << "No candidates are running for your region\n";
+		else {
+			cout << "Error reading voters file." << endl;
+		}
 	}
 	void Result() {}
 };
@@ -279,7 +264,7 @@ int main() {
 		cout << "1. Register as Voter\n";
 		cout << "2. Login as Voter\n";
 		cout << "3. Login as Admin\n";
-		cout << "4.Enter as Candidate\n";
+		cout << "4.Login as Candidate\n";
 		cout << "5. Exit\n";
 		cout << "Enter choice: ";
 		cin >> mainChoice;
@@ -381,19 +366,74 @@ int main() {
 			administrator A;
 			bool status = A.login();
 			if (status) {
-				int choice;
-				cout << "1. Add Candidates" << endl;
-				cout << "2. Display Results" << endl;
-				cin >> choice;
-				switch (choice) {
-				case 1:
-					A.addcandidate();
+				ifstream localFile("Local.txt");
+				ifstream nationalFile("National.txt");
+
+				if (!localFile.is_open() || !nationalFile.is_open()) {
+					string ename;
+					cout << "Elections not created. Please create elections." << endl;
+					cout << "Enter election name";
+					cin >> ename;
+					A.createElection(ename);
+					A.createElection(ename);
+				}
+
+				int choice1;
+				cout << "1. Local elections \n";
+				cout << "2. National elections\n ";
+				cin >> choice1;
+
+				switch (choice1) {
+				case 1: {
+					ofstream file("Local.txt", ios::app);
+					if (file) {
+						int choice;
+						cout << "1. Add Candidates" << endl;
+						cout << "2. Display Results" << endl;
+						cin >> choice;
+						switch (choice) {
+						case 1:
+							A.addcandidate("Local.txt");
+							break;
+						case 2:
+							A.displayresult("Local.txt");
+							break;
+						}
+					}
+					else {
+						cout << "Error opening Local.txt" << endl;
+					}
+					file.close();
 					break;
-				case 2:
-					A.displayresult();
+				}
+
+				case 2: {
+					ofstream file("National.txt", ios::app);
+					if (file) {
+						int choice;
+						cout << "1. Add Candidates" << endl;
+						cout << "2. Display Results" << endl;
+						cin >> choice;
+						switch (choice) {
+						case 1:
+							A.addcandidate("National.txt");
+							break;
+						case 2:
+							A.displayresult("National.txt");
+							break;
+						}
+					}
+					else {
+						cout << "Error opening National.txt" << endl;
+					}
+					file.close();
+					break;
+				}
 				}
 			}
-			else cout << "Login failed" << endl;
+			else {
+				cout << "Login failed" << endl;
+			}
 		}
 	} while (mainChoice == 5);
 }
