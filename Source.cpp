@@ -497,13 +497,32 @@ int main() {
 						{
 							int choose1;
 							cout << "1. Cast your vote\n";
-							cout << "2. View your vote status\n";
-							cout << "3. View Vote Statistics\n";
+							cout << "2.View your vote status\n";
+							cout << "3.View Vote Statistics\n";
 							cout << "4. Exit\n";
 							cin >> choose1;
 							do {
-								if (choose1 == 1) {}
-								else if (choose1 == 2) {}
+								if (choose1 == 1) {
+									bool s = v.viewvotestatus();
+									if (s) {
+										cout << "you have already casted the vote" << endl;
+									}
+									else {
+										nationalElection n;
+										//n.diplayShedule();
+										n.displaycandidates("National.txt");
+										v.castvote("National.txt");
+										v.updateVoteStatus();
+									}
+								}
+
+								else if (choose1 == 2) {
+									bool s = v.viewvotestatus();
+									if (s) {
+										cout << "Your vote has been casted";
+									}
+									else cout << "You have not casted vote";
+								}
 								else if (choose1 == 3) {}
 								else break;
 							} while (choose1 != 4);
