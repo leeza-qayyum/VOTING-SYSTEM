@@ -374,21 +374,24 @@ public:
 			cout << "Error reading voters file." << endl;
 		}
 	}
-	void Result() {}
 };
 int main() {
 	int mainChoice;
 
-	do {
+	do
+	{
 		cout << "\n========== Online Voting System ==========\n";
 		cout << "1. Register as Voter\n";
 		cout << "2. Login as Voter\n";
 		cout << "3. Login as Admin\n";
-		cout << "4.Login as Candidate\n";
-		cout << "5. Exit\n";
+		cout << "4. Exit\n";
 		cout << "Enter choice: ";
 		cin >> mainChoice;
-		if (mainChoice == 1) {
+		system("cls");
+		switch (mainChoice)
+		{
+		case 1:
+		{
 			string name; int password; int age;  long long cnic;
 			cout << "Enter your name ";
 			cin >> name;
@@ -431,7 +434,9 @@ int main() {
 			}
 			else cout << "You are not eligible for voting" << endl;
 		}
-		else if (mainChoice == 2) {
+		break;
+		case 2:
+		{
 			voters v;
 			bool status = v.login();
 			if (status == true) {
@@ -442,16 +447,22 @@ int main() {
 					cout << "1.View Elections \n";
 					cout << "2.Logout\n";
 					cin >> choice;
+					system("cls");
 					switch (choice)
 					{
 					case 1:
+					{
 						int election;
 						cout << "1. Local Elections\n";
 						cout << "2. National Elections\n";
 						cout << "3. Exit\n";
 						cout << "Choose election \n ";
 						cin >> election;
-						if (election == 1) {
+						system("cls");
+						switch (election)
+						{
+						case 1:
+						{
 							int choose;
 							cout << "1. Cast your vote\n";
 							cout << "2.View your vote status\n";
@@ -474,14 +485,16 @@ int main() {
 								else if (choose == 2) {
 									bool s = v.viewvotestatus();
 									if (s) {
-										cout << "Your vote has been casted";
+										cout << "Your vote has been casted\n";
 									}
-									else cout << "You have not casted vote";
+									else cout << "You have not casted vote\n";
 								}
 								else break;
 							} while (choose == 3);
 						}
-						else if (election == 2) {
+						break;
+						case 2:
+						{
 							int choose1;
 							cout << "1. Cast your vote\n";
 							cout << "2. View your vote status\n";
@@ -493,19 +506,26 @@ int main() {
 								else if (choose1 == 2) {}
 								else if (choose1 == 3) {}
 								else break;
-							} while (choose1 == 4);
+							} while (choose1 != 4);
 						}
-						else break;
 						break;
-					case 2: break;
+						}
 					}
-				} while (choice == 2);
+					break;
+					case 2:
+						cout << "Logging Out\n";
+						break;
+					}
+				} while (choice != 2);
 			}
-			else {
+			else
+			{
 				cout << "Login Failed";
 			}
 		}
-		else if (mainChoice == 3) {
+		break;
+		case 3:
+		{
 			administrator A;
 			bool status = A.login();
 			if (status) {
@@ -524,8 +544,9 @@ int main() {
 				int choice1;
 				cout << "1. Local elections \n";
 				cout << "2. National elections\n ";
+				cout << "3.Exit" << endl;
 				cin >> choice1;
-
+				system("cls");
 				switch (choice1) {
 				case 1: {
 					ofstream file("Local.txt", ios::app);
@@ -534,6 +555,7 @@ int main() {
 						cout << "1. Add Candidates" << endl;
 						cout << "2. Display Results" << endl;
 						cin >> choice;
+						system("cls");
 						switch (choice) {
 						case 1:
 							A.addcandidate("Local.txt");
@@ -571,12 +593,17 @@ int main() {
 					}
 					file.close();
 					break;
-				}
+				}break;
+				case 3:
+					cout << "Exiting\n";
+
+				default: cout << "Ivalid Choice\n";
 				}
 			}
 			else {
 				cout << "Login failed" << endl;
 			}
 		}
-	} while (mainChoice == 5);
+		}
+	} while (mainChoice != 4);
 }
