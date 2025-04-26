@@ -4,7 +4,7 @@
 #include <iomanip>
 using namespace std;
 class user {
-private:
+protected:
 	string name;
 	int password;
 	long long cnic;
@@ -33,15 +33,17 @@ public:
 class voters :public user {
 private:
 	string regions[4] = { "Lahore","Gujranwala","Multan","Faislabad" };
-	string region;
+	string region, status;
 	int age;
+	long long loggedINcnic;
 public:
-	voters() { region = ""; age = 0; }
+	voters() { region = ""; age = 0; status = "Null"; loggedINcnic = 0; }
 	voters(string n, int p, int a, long long c) :user(n, p, c) {
 		age = a;
 		int lastdigit = c % 10;
+		status = "Null";
 		region = regions[lastdigit % 4];
-
+		loggedINcnic = 0;
 		bool status = registeration();
 		if (status == true) {
 			cout << "Registered successfully" << endl;
@@ -49,10 +51,9 @@ public:
 		else cout << "Registration Failed" << endl;
 	}
 	bool registeration() override {
-		string n = getname(); int p = getpassword(); long long c = getcnic();
 		ofstream file("voters.txt", ios::app);
 		if (file) {
-			file << n << " " << p << " " << c << " " << region << "\n";
+			file << name << " " << password << " " << cnic << " " << region << " " << status << "\n";
 			return true;
 		}
 		return false;
@@ -62,10 +63,11 @@ public:
 		cout << "Enter your name "; cin >> n;
 		cout << "Enter password "; cin >> p;
 		cout << "Enter your CNIC "; cin >> c;
+		loggedINcnic = c;
 		ifstream file("voters.txt");
-		string sn, sr; int sp; long long sc;
+		string sn, sr; int sp; long long sc; string stat;
 		if (file) {
-			while (file >> sn >> sp >> sc >> sr) {
+			while (file >> sn >> sp >> sc >> sr >> stat) {
 				if (n == sn && p == sp && c == sc) {
 					return true;
 				}
@@ -76,7 +78,6 @@ public:
 	void castvote(string filename) {
 		string n, p, r;
 		int v;
-		bool found = false;
 		string name;
 		ifstream file(filename);
 		ofstream temp("temp.txt");
@@ -89,7 +90,6 @@ public:
 		while (file >> n >> p >> r >> v) {
 			if (n == name) {
 				v++;
-				found = true;
 				cout << "Vote casted for " << n << " in region " << r << ".\n";
 			}
 			temp << n << " " << p << " " << r << " " << v << "\n";
@@ -100,21 +100,66 @@ public:
 
 		remove(filename.c_str());
 		rename("temp.txt", filename.c_str());
-
-		if (found) {
-			ofstream infile("votes.txt", ios::app);
-			if (infile) {
-				infile << name << " " << r << " " << v << "\n";
-				infile.close();
-			}
-			else {
-				cout << "Error writing to votes.txt\n";
-			}
+	}
+	void updateVoteStatus() {
+		ifstream file("voters.txt");
+		ofstream temp("temp.txt");
+		string sn, sr, currentStatus;
+		int sp;
+		long long sc;
+		bool found = false;
+		if (!file) {
+			cout << "Error opening file.\n";
+			return;
+		}
+		else if (!temp) {
+			cout << "Error in temp\n";
 		}
 		else {
-			cout << "The following candidate is not running for this seat.\n";
+			while (file >> sn >> sp >> sc >> sr >> currentStatus) {
+				if (sc == loggedINcnic) {
+					temp << sn << " " << sp << " " << sc << " " << sr << " Voted";
+					found = true;
+				}
+				else {
+					temp << sn << " " << sp << " " << sc << " " << sr << " " << currentStatus << "\n";
+				}
+			}
+			file.close();
+			temp.close();
+		}
+		if (found == true) {
+			remove("voters.txt");
+			rename("temp.txt", "voters.txt");
+			cout << "Voter status updated successfully." << endl;
+		}
+		else {
+			cout << "Voter not found with CNIC: " << loggedINcnic << endl;
+			remove("temp.txt");
 		}
 	}
+	bool viewvotestatus()
+	{
+		ifstream file("voters.txt");
+		if (!file) {
+			cout << "Error opening file.\n";
+			return false;
+		}
+		else {
+			string sn, sr, currentStatus;
+			int sp;
+			long long sc;
+			while (file >> sn >> sp >> sc >> sr >> currentStatus) {
+				if (sc == loggedINcnic) {
+					if (currentStatus == "Voted") {
+						return true;
+					}
+					else return false;
+				}
+			}
+		}
+	}
+
 };
 class candidate
 {
@@ -254,22 +299,23 @@ public:
 		}
 	}
 };
-class election {
+class election
+{
 public:
 
-	virtual void displaycandidates() = 0;
+	virtual void displaycandidates(string fl) = 0;
 	virtual void Result() = 0;
 };
 class LocalElection :public election {
 	voters v;
 public:
-	void displaycandidates() override {
+	void displaycandidates(string filename) override {
 		string n, r;
 		int p;
 		long long c;
 		ifstream file("voters.txt");
 		if (file >> n >> p >> c >> r) {
-			ifstream infile("candidates.txt");
+			ifstream infile(filename);
 			if (infile) {
 				string name, party, region;
 				int votes;
@@ -318,22 +364,33 @@ int main() {
 				cin >> password;
 				cout << "Enter your CNIC ";
 				cin >> cnic;
-				ifstream file("voters.txt");
-				string sn, sr; int sp; long long sc;
-				bool alreadyRegistered = false;
-				if (file) {
-					while (file >> sn >> sp >> sc >> sr) {
-						if (cnic == sc) {
-							alreadyRegistered = true;
-							break;
+				int count = 0;
+				long long c = cnic;
+				while (c != 0) {
+					c /= 10;
+					count++;
+				}
+				if (count <= 12) {
+					cout << "ERROR!!! CNIC must be of 13 numbers" << endl;
+				}
+				else {
+					ifstream file("voters.txt");
+					string sn, sr; int sp; long long sc;
+					bool alreadyRegistered = false;
+					if (file) {
+						while (file >> sn >> sp >> sc >> sr) {
+							if (cnic == sc) {
+								alreadyRegistered = true;
+								break;
+							}
 						}
-					}
-					file.close();
-					if (alreadyRegistered == true) {
-						cout << "You have already been registered " << endl;
-					}
-					else {
-						voters v(name, password, age, cnic);
+						file.close();
+						if (alreadyRegistered == true) {
+							cout << "You have already been registered " << endl;
+						}
+						else {
+							voters v(name, password, age, cnic);
+						}
 					}
 				}
 			}
@@ -363,27 +420,37 @@ int main() {
 							int choose;
 							cout << "1. Cast your vote\n";
 							cout << "2.View your vote status\n";
-							cout << "3.View Vote Statistics\n";
-							cout << "4. Exit\n";
+							cout << "3. Exit\n";
 							cin >> choose;
 							do {
 								if (choose == 1) {
-
-									LocalElection l;
-									l.diplayShedule();
-									l.displaycandidates();
-									v.castvote("Local.txt");
+									bool s = v.viewvotestatus();
+									if (s) {
+										cout << "You have already catsed vote, Voter van Vote only ONCE";
+									}
+									else {
+										LocalElection l;
+										//l.diplayShedule();
+										l.displaycandidates("Local.txt");
+										v.castvote("Local.txt");
+										v.updateVoteStatus();
+									}
 								}
-								else if (choose == 2) {}
-								else if (choose == 3) {}
+								else if (choose == 2) {
+									bool s = v.viewvotestatus();
+									if (s) {
+										cout << "Your vote has been casted";
+									}
+									else cout << "You have not casted vote";
+								}
 								else break;
-							} while (choose == 4);
+							} while (choose == 3);
 						}
 						else if (election == 2) {
 							int choose1;
 							cout << "1. Cast your vote\n";
-							cout << "2.View your vote status\n";
-							cout << "3.View Vote Statistics\n";
+							cout << "2. View your vote status\n";
+							cout << "3. View Vote Statistics\n";
 							cout << "4. Exit\n";
 							cin >> choose1;
 							do {
