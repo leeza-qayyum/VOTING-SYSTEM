@@ -341,6 +341,41 @@ public:
 	}
 	void Result() {}
 };
+class nationalElection :public election {
+	voters v;
+public:
+	void displaycandidates(string filename) override {
+		string n, r;
+		int p;
+		long long c;
+		ifstream file("voters.txt");
+		if (file >> n >> p >> c >> r) {
+			ifstream infile(filename);
+			if (infile) {
+				string name, party, region;
+				int votes;
+				cout << "The Candidates of " << r << " are following:\n";
+				int i = 1;
+				while (infile >> name >> party >> region >> votes) {
+					if (region == r) {
+						cout << i << ". " << name << " (" << party << ")" << endl;
+						i++;
+					}
+				}
+				if (i == 1) {
+					cout << "No candidates found in this region." << endl;
+				}
+			}
+			else {
+				cout << "Error reading candidates file." << endl;
+			}
+		}
+		else {
+			cout << "Error reading voters file." << endl;
+		}
+	}
+	void Result() {}
+};
 int main() {
 	int mainChoice;
 
