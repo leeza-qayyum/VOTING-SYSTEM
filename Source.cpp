@@ -147,8 +147,7 @@ public:
 			remove("temp.txt");
 		}
 	}
-	bool viewvotestatus(string fl)
-	{
+	bool viewvotestatus(string fl){
 		ifstream file("voters.txt");
 		if (!file) {
 			cout << "Error opening file.\n";
@@ -178,54 +177,40 @@ public:
 	}
 
 };
-class candidate
-{
+class candidate{
 	string name;
 	string party;
 	int votes;
 public:
-	candidate()
-	{
+	candidate(){
 		name = " ";
 		party = " ";
 		votes = 0;
 	}
-	candidate(string n, string p, int v)
-	{
-		name = n;
-		party = p;
-		votes = v;
-	}
-	candidate(candidate& c)
-	{
+	candidate(string n, string p, int v):name(n),party(p),votes(v){}
+	candidate(candidate& c){
 		name = c.name;
 		party = c.party;
 		votes = c.votes;
 	}
-	void operator =(candidate c)
-	{
+	void operator =(candidate c){
 		this->name = c.name;
 		this->party = c.party;
 		this->votes = c.votes;
 	}
-	void setname(string n)
-	{
+	void setname(string n){
 		name = n;
 	}
-	void setparty(string p)
-	{
+	void setparty(string p){
 		party = p;
 	}
-	string getname() const
-	{
+	string getname() const{
 		return name;
 	}
-	string getparty() const
-	{
+	string getparty() const{
 		return party;
 	}
-	int getvotes() const
-	{
+	int getvotes() const{
 		return votes;
 	}
 };
@@ -308,8 +293,7 @@ public:
 		else return false;
 	}
 };
-class election
-{
+class election{
 public:
 	virtual void displaycandidates(string fl) = 0;
 	virtual void Result(string fl) = 0;
@@ -416,12 +400,19 @@ public:
 
 	}
 };
+void header(){
+	cout << "	     _ _                               _" << endl;
+	cout << "            | (_)                         _   (_)                               _               " << endl;
+	cout << "  ___  ____ | |_ ____  ____    _   _ ___ | |_  _ ____   ____     ___ _   _  ___| |_  ____ ____" << endl;
+	cout << " / _ \\|  _ \\| | |  _ \\/  _ )  | | | / _ \\| _ )| |  _ \\ / _  |   /___) | | |/___)  _)/ _  )    \\" << endl;
+	cout << "| |_| | | | | | | | | ( (/ /   \\ V / |_| | |__| | | | ( ( | |  |___ | |_| |___ | |_( (/ /| | | |" << endl;
+	cout << " \\___/|_| |_|_|_|_| |_|\\____)   \\_/ \\___/ \\___)_|_| |_|\\_|| |  (___/ \\__  (___ /\\___)____)_|_|_|" << endl;
+	cout << "                                                       (____|       (____/" << endl;
+}
 int main() {
 	int mainChoice;
-
-	do
-	{
-		system("cls");
+	header();
+	do{
 		cout << "\n========== Online Voting System ==========\n";
 		cout << "1. Register as Voter\n";
 		cout << "2. Login as Voter\n";
@@ -429,11 +420,9 @@ int main() {
 		cout << "4. Exit\n";
 		cout << "Enter choice: ";
 		cin >> mainChoice;
-		system("cls");
-		switch (mainChoice)
-		{
-		case 1:
-		{
+		system("cls");header();
+		switch (mainChoice){
+		case 1:{
 			string name; int password; int age;  long long cnic;
 			cout << "Enter your name ";
 			cin >> name;
@@ -462,7 +451,7 @@ int main() {
 							if (cnic == sc) {
 								alreadyRegistered = true;
 								break;
-							}
+							}system("cls"); header();
 						}
 						file.close();
 						if (alreadyRegistered == true) {
@@ -477,34 +466,28 @@ int main() {
 			else cout << "You are not eligible for voting" << endl;
 		}
 		break;
-		case 2:
-		{
+		case 2:{
 			voters v;
 			bool status = v.login();
 			if (status == true) {
 				cout << "Login successfull" << endl;
 				int choice;
-				do
-				{
+				do{
 					cout << "1.View Elections \n";
 					cout << "2.Logout\n";
 					cin >> choice;
-					system("cls");
-					switch (choice)
-					{
-					case 1:
-					{
+					system("cls"); header();
+					switch (choice){
+					case 1:{
 						int election;
 						cout << "1. Local Elections\n";
 						cout << "2. National Elections\n";
 						cout << "3. Exit\n";
 						cout << "Choose election \n ";
 						cin >> election;
-						system("cls");
-						switch (election)
-						{
-						case 1:
-						{
+						system("cls"); header();
+						switch (election){
+						case 1:{
 							int choose;
 							cout << "1. Cast your vote\n";
 							cout << "2.View your vote status\n";
@@ -539,8 +522,7 @@ int main() {
 							} while (choose == 3);
 						}
 						break;
-						case 2:
-						{
+						case 2:{
 							int choose1;
 							cout << "1. Cast your vote\n";
 							cout << "2.View your vote status\n";
@@ -584,14 +566,12 @@ int main() {
 					}
 				} while (choice != 2);
 			}
-			else
-			{
+			else{
 				cout << "Login Failed";
 			}
 		}
 		break;
-		case 3:
-		{
+		case 3:{
 			administrator A;
 			bool status = A.login();
 			if (status) {
@@ -612,7 +592,7 @@ int main() {
 				cout << "2. National elections\n ";
 				cout << "3.Exit" << endl;
 				cin >> choice1;
-				system("cls");
+				system("cls"); header();
 				switch (choice1) {
 				case 1: {
 					ofstream file("Local.txt", ios::app);
@@ -621,7 +601,7 @@ int main() {
 						cout << "1. Add Candidates" << endl;
 						cout << "2.End Elections" << endl;
 						cin >> choice;
-						system("cls");
+						system("cls"); header();
 						switch (choice) {
 						case 1:
 							A.addcandidate("Local.txt");
@@ -630,15 +610,16 @@ int main() {
 							bool c = A.EndElections();
 							if (c) {
 								int choice;
-								system("cls");
+								system("cls"); header();
 								cout << "1.Display Result" << endl;
 								cin >> choice;
-								system("cls");
+								system("cls"); header();
 								LocalElection l;
 								l.Result("Local.txt");
 								int k;
 								cout << "\n\nPress 1 to exit." << endl;
 								cin >> k;
+								system("cls"); header();
 								if (k == 1)
 									break;
 							}
@@ -658,9 +639,9 @@ int main() {
 						cout << "1. Add Candidates" << endl;
 						cout << "2. End Elections" << endl;
 						cin >> choice;
+						system("cls"); header();
 						switch (choice) {
-						case 1:
-						{
+						case 1:{
 							A.addcandidate("National.txt");
 							break;
 						}
@@ -668,15 +649,16 @@ int main() {
 							bool c1 = A.EndElections();
 							if (c1) {
 								int choice;
-								system("cls");
+								system("cls"); header();
 								cout << "1.Display Result" << endl;
 								cin >> choice;
-								system("cls");
+								system("cls"); header();
 								nationalElection n;
 								n.Result("National.txt");
 								int k;
 								cout << "\n\nPress 1 to exit." << endl;
 								cin >> k;
+								system("cls"); header();
 								if (k == 1)
 									break;
 							}
@@ -701,13 +683,4 @@ int main() {
 		}
 		}
 	} while (mainChoice != 4);
-}
-void header()
-{
-	cout << "  ____  _    _ _      _____ _   _ ______  __      ______ _______ _____ _   _  _____    _______     _______ _______ ______ __  __ " << endl;
-	cout << " / __ \ | \\  | | |    |_   _ | \\ | |  ____ | \ \    / / __ | __   __ | _   _ | \ | |/ ____|  / ____\ \   / / ____ | __   __ | ____ | \/  |" << endl;
-	cout << "| |  | |  \\ | | |      | | |  \\| | |__     \ \  / | |  | | | |    | | |  \| | |  __ | (___  \ \/ | (__    | |  | |__ | \  / |" << endl;
-	cout << "| |  | | . `  | |      | | | . ` | __ | \ \/ /| |  | | | |    | | | . ` | | |_ | \___ \  \ / \___ \   | |  |  __| | |\/| |" << endl;
-	cout << "| || | |\\   | |____ | || |\\  | |____     \  / | || | | |   | || |\  | || |  __) |  | |  ____) |  | |  | || |  | |" << endl;
-	cout << " \\/|| \\| ______ | _____ | _ | \\ | ______ | \ / \/  ||  |____ | _ | \_ | \| |/   || |/   ||  |_____ | |  | |" << endl;
 }
