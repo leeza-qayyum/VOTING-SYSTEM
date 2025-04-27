@@ -3,6 +3,9 @@
 #include <string>
 #include <iomanip>
 using namespace std;
+string stop = "\033[0m";
+string crimson = "\033[38;5;197m";
+string green = "\033[32m";
 bool c = false;
 bool c1 = false;
 class user {
@@ -49,9 +52,9 @@ public:
 		loggedINcnic = 0;
 		bool status = registeration();
 		if (status == true) {
-			cout << "Registered successfully" << endl;
+			cout << green << "Registered successfully" << stop << endl;
 		}
-		else cout << "Registration Failed" << endl;
+		else cout << crimson << "Registration Failed" << stop << endl;
 	}
 	bool registeration() override {
 		ofstream file("voters.txt", ios::app);
@@ -86,7 +89,7 @@ public:
 		ofstream temp("temp.txt");
 
 		if (!file || !temp) {
-			cout << "Error opening file.\n";
+			cout << crimson << "Error opening file.\n" << stop;
 			return;
 		}
 		cout << "Enter name of canidate you wanna cast vote for "; cin >> name;
@@ -112,11 +115,11 @@ public:
 		long long sc;
 		bool found = false;
 		if (!file) {
-			cout << "Error opening file.\n";
+			cout << crimson << "Error opening file.\n" << stop;
 			return;
 		}
 		else if (!temp) {
-			cout << "Error in temp\n";
+			cout << crimson << "Error in temp\n" << stop;
 		}
 		else {
 			while (file >> sn >> sp >> sc >> sr >> currentStatus >> currentStatus1) {
@@ -140,17 +143,17 @@ public:
 		if (found == true) {
 			remove("voters.txt");
 			rename("temp.txt", "voters.txt");
-			cout << "Voter status updated successfully." << endl;
+			cout << green << "Voter status updated successfully." << stop << endl;
 		}
 		else {
-			cout << "Voter not found with CNIC: " << loggedINcnic << endl;
+			cout << crimson << "Voter not found with CNIC: " << loggedINcnic << stop << endl;
 			remove("temp.txt");
 		}
 	}
-	bool viewvotestatus(string fl){
+	bool viewvotestatus(string fl) {
 		ifstream file("voters.txt");
 		if (!file) {
-			cout << "Error opening file.\n";
+			cout << crimson << "Error opening file.\n" << stop;
 			return false;
 		}
 		else {
@@ -177,40 +180,40 @@ public:
 	}
 
 };
-class candidate{
+class candidate {
 	string name;
 	string party;
 	int votes;
 public:
-	candidate(){
+	candidate() {
 		name = " ";
 		party = " ";
 		votes = 0;
 	}
-	candidate(string n, string p, int v):name(n),party(p),votes(v){}
-	candidate(candidate& c){
+	candidate(string n, string p, int v) :name(n), party(p), votes(v) {}
+	candidate(candidate& c) {
 		name = c.name;
 		party = c.party;
 		votes = c.votes;
 	}
-	void operator =(candidate c){
+	void operator =(candidate c) {
 		this->name = c.name;
 		this->party = c.party;
 		this->votes = c.votes;
 	}
-	void setname(string n){
+	void setname(string n) {
 		name = n;
 	}
-	void setparty(string p){
+	void setparty(string p) {
 		party = p;
 	}
-	string getname() const{
+	string getname() const {
 		return name;
 	}
-	string getparty() const{
+	string getparty() const {
 		return party;
 	}
-	int getvotes() const{
+	int getvotes() const {
 		return votes;
 	}
 };
@@ -248,10 +251,10 @@ public:
 		else if (!file) {
 			bool q = registeration();
 			if (q) {
-				cout << "Admin is register" << endl;
+				cout << green << "Admin is register" << stop << endl;
 				return true;
 			}
-			else cout << "Registeration failed" << endl;
+			else cout << crimson << "Registeration failed" << stop << endl;
 		}
 		else return false;
 	}
@@ -259,11 +262,11 @@ public:
 		string filename = electionName + ".txt";
 		ofstream file(filename);
 		if (file) {
-			cout << "Election created successfully." << endl;
+			cout << green << "Election created successfully." << stop << endl;
 			file.close();
 		}
 		else {
-			cout << "Error creating election." << endl;
+			cout << crimson << "Error creating election." << stop << endl;
 		}
 	}
 	void addcandidate(string filename) {
@@ -277,10 +280,10 @@ public:
 			c.setname(n); c.setparty(p);
 			file << c.getname() << " " << c.getparty() << " " << r << " " << c.getvotes() << "\n";
 			file.close();
-			cout << "Candidate added successfully." << endl;
+			cout << green << "Candidate added successfully." << stop << endl;
 		}
 		else {
-			cout << "Error adding candidate." << endl;
+			cout << crimson << "Error adding candidate." << stop << endl;
 		}
 	}
 	bool EndElections() {
@@ -293,7 +296,7 @@ public:
 		else return false;
 	}
 };
-class election{
+class election {
 public:
 	virtual void displaycandidates(string fl) = 0;
 	virtual void Result(string fl) = 0;
@@ -320,15 +323,15 @@ public:
 					}
 				}
 				if (i == 1) {
-					cout << "No candidates found in this region." << endl;
+					cout << crimson << "No candidates found in this region." << stop << endl;
 				}
 			}
 			else {
-				cout << "Error reading candidates file." << endl;
+				cout << crimson << "Error reading candidates file." << stop << endl;
 			}
 		}
 		else {
-			cout << "Error reading voters file." << endl;
+			cout << crimson << "Error reading voters file." << stop << endl;
 		}
 	}
 	void Result(string filename) override {
@@ -385,22 +388,22 @@ public:
 					}
 				}
 				if (i == 1) {
-					cout << "No candidates found in this region." << endl;
+					cout << crimson << "No candidates found in this region." << stop << endl;
 				}
 			}
 			else {
-				cout << "Error reading candidates file." << endl;
+				cout << crimson << "Error reading candidates file." << stop << endl;
 			}
 		}
 		else {
-			cout << "Error reading voters file." << endl;
+			cout << crimson << "Error reading voters file." << stop << endl;
 		}
 	}
 	void Result(string filename)override {
 
 	}
 };
-void header(){
+void header() {
 	cout << "	     _ _                               _" << endl;
 	cout << "            | (_)                         _   (_)                               _               " << endl;
 	cout << "  ___  ____ | |_ ____  ____    _   _ ___ | |_  _ ____   ____     ___ _   _  ___| |_  ____ ____" << endl;
@@ -412,7 +415,7 @@ void header(){
 int main() {
 	int mainChoice;
 	header();
-	do{
+	do {
 		cout << "\n========== Online Voting System ==========\n";
 		cout << "1. Register as Voter\n";
 		cout << "2. Login as Voter\n";
@@ -420,9 +423,9 @@ int main() {
 		cout << "4. Exit\n";
 		cout << "Enter choice: ";
 		cin >> mainChoice;
-		system("cls");header();
-		switch (mainChoice){
-		case 1:{
+		system("cls"); header();
+		switch (mainChoice) {
+		case 1: {
 			string name; int password; int age;  long long cnic;
 			cout << "Enter your name ";
 			cin >> name;
@@ -440,7 +443,7 @@ int main() {
 					count++;
 				}
 				if (count <= 12) {
-					cout << "ERROR!!! CNIC must be of 13 numbers" << endl;
+					cout << crimson << "ERROR!!! CNIC must be of 13 numbers" << stop << endl;
 				}
 				else {
 					ifstream file("voters.txt");
@@ -455,7 +458,7 @@ int main() {
 						}
 						file.close();
 						if (alreadyRegistered == true) {
-							cout << "You have already been registered " << endl;
+							cout << green << "You have already been registered " << stop << endl;
 						}
 						else {
 							voters v(name, password, age, cnic);
@@ -463,22 +466,22 @@ int main() {
 					}
 				}
 			}
-			else cout << "You are not eligible for voting" << endl;
+			else cout << crimson << "You are not eligible for voting" << stop << endl;
 		}
-		break;
-		case 2:{
+			  break;
+		case 2: {
 			voters v;
 			bool status = v.login();
 			if (status == true) {
-				cout << "Login successfull" << endl;
+				cout << green << "Login successfull" << stop << endl;
 				int choice;
-				do{
+				do {
 					cout << "1.View Elections \n";
 					cout << "2.Logout\n";
 					cin >> choice;
 					system("cls"); header();
-					switch (choice){
-					case 1:{
+					switch (choice) {
+					case 1: {
 						int election;
 						cout << "1. Local Elections\n";
 						cout << "2. National Elections\n";
@@ -486,8 +489,8 @@ int main() {
 						cout << "Choose election \n ";
 						cin >> election;
 						system("cls"); header();
-						switch (election){
-						case 1:{
+						switch (election) {
+						case 1: {
 							int choose;
 							cout << "1. Cast your vote\n";
 							cout << "2.View your vote status\n";
@@ -521,8 +524,8 @@ int main() {
 								else break;
 							} while (choose == 3);
 						}
-						break;
-						case 2:{
+							  break;
+						case 2: {
 							int choose1;
 							cout << "1. Cast your vote\n";
 							cout << "2.View your vote status\n";
@@ -556,22 +559,22 @@ int main() {
 								else break;
 							} while (choose1 == 3);
 						}
-						break;
+							  break;
 						}
 					}
-					break;
+						  break;
 					case 2:
 						cout << "Logging Out\n";
 						break;
 					}
 				} while (choice != 2);
 			}
-			else{
-				cout << "Login Failed";
+			else {
+				cout << crimson << "Login Failed" << stop << endl;
 			}
 		}
-		break;
-		case 3:{
+			  break;
+		case 3: {
 			administrator A;
 			bool status = A.login();
 			if (status) {
@@ -626,7 +629,7 @@ int main() {
 						}
 					}
 					else {
-						cout << "Error opening Local.txt" << endl;
+						cout << crimson << "Error opening Local.txt" << stop << endl;
 					}
 					file.close();
 					break;
@@ -641,7 +644,7 @@ int main() {
 						cin >> choice;
 						system("cls"); header();
 						switch (choice) {
-						case 1:{
+						case 1: {
 							A.addcandidate("National.txt");
 							break;
 						}
@@ -666,19 +669,17 @@ int main() {
 						}
 					}
 					else {
-						cout << "Error opening National.txt" << endl;
+						cout << crimson << "Error opening National.txt" << stop << endl;
 					}
 					file.close();
 					break;
 				}break;
 				case 3:
 					cout << "Exiting\n";
-
-				default: cout << "Ivalid Choice\n";
 				}
 			}
 			else {
-				cout << "Login failed" << endl;
+				cout << crimson << "Login failed" << stop << endl;
 			}
 		}
 		}
