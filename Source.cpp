@@ -6,8 +6,11 @@ using namespace std;
 string stop = "\033[0m";
 string crimson = "\033[38;5;197m";
 string green = "\033[32m";
+string blue = "\033[34m";
+string yellow = "\033[33m";
 bool c = false;
 bool c1 = false;
+long long loggedINcnic;
 class user {
 protected:
 	string name;
@@ -40,16 +43,14 @@ private:
 	string regions[4] = { "Lahore","Gujranwala","Multan","Faislabad" };
 	string region, status, status1;
 	int age;
-	long long loggedINcnic;
 public:
-	voters() { region = ""; age = 0; status = "Null"; status1 = "Null"; loggedINcnic = 0; }
+	voters() { region = ""; age = 0; status = "Null"; status1 = "Null"; }
 	voters(string n, int p, int a, long long c) :user(n, p, c) {
 		age = a;
 		int lastdigit = c % 10;
 		status = "Null";
 		status1 = "Null";
 		region = regions[lastdigit % 4];
-		loggedINcnic = 0;
 		bool status = registeration();
 		if (status == true) {
 			cout << green << "Registered successfully" << stop << endl;
@@ -246,6 +247,7 @@ public:
 				if (n == sn && p == sp && c == sc) {
 					return true;
 				}
+				else return false;
 			}
 		}
 		else if (!file) {
@@ -286,14 +288,19 @@ public:
 			cout << crimson << "Error adding candidate." << stop << endl;
 		}
 	}
-	bool EndElections() {
-		cout << "Do ypu want to end the elections?\n";
-		cout << "1.YES" << "\n 2.NO" << endl;
-		cin >> c;
-		if (c) {
-			return true;
+	void EndElections(string file) {
+		int choice;
+		cout << setw(54) << "\n\n\n\n\n\n\n\n\n\n                                                           Do you want to end the elections?\n\n";
+		cout << "                                                           1.YES" << "               2.NO" << endl;
+		cin >> choice;
+		if (choice == 1) {
+			if (file == "Local.txt") {
+				c = true;
+			}
+			else if (file == "National.txt") {
+				c1 = true;
+			}
 		}
-		else return false;
 	}
 };
 class election {
@@ -304,34 +311,33 @@ public:
 class LocalElection :public election {
 	voters v;
 public:
-	void displaycandidates(string filename) override {
-		string n, r;
+	void displaycandidates(string filename) {
+		string name, region, stat, stat1;
 		int p;
-		long long c;
+		long long cnic;
 		ifstream file("voters.txt");
-		if (file >> n >> p >> c >> r) {
-			ifstream infile(filename);
-			if (infile) {
-				string name, party, region;
-				int votes;
-				cout << "The Candidates of " << r << " are following:\n";
-				int i = 1;
-				while (infile >> name >> party >> region >> votes) {
-					if (region == r) {
-						cout << i << ". " << name << " (" << party << ")" << endl;
-						i++;
+		while (file >> name >> p >> cnic >> region >> stat >> stat1) {
+			if (cnic == loggedINcnic) {
+				ifstream infile(filename);
+				if (infile) {
+					string candName, party, candRegion;
+					int votes;
+					cout << "The candidates of " << region << " are following:\n";
+					int i = 1;
+					while (infile >> candName >> party >> candRegion >> votes) {
+						if (candRegion == region) {
+							cout << i << ". " << candName << " (" << party << ")" << endl;
+							i++;
+						}
+					}
+					if (i == 1) {
+						cout << crimson << "No candidates found in this region." << stop << endl;
 					}
 				}
-				if (i == 1) {
-					cout << crimson << "No candidates found in this region." << stop << endl;
+				else {
+					cout << crimson << "Error reading candidates file." << stop << endl;
 				}
 			}
-			else {
-				cout << crimson << "Error reading candidates file." << stop << endl;
-			}
-		}
-		else {
-			cout << crimson << "Error reading voters file." << stop << endl;
 		}
 	}
 	void Result(string filename) override {
@@ -346,7 +352,7 @@ public:
 			while (file >> n >> p >> r >> v) {
 				if (r != currentRegion) {
 					if (!currentRegion.empty()) {
-						cout << "Winner of " << currentRegion << " REGION: " << winnerName << " (" << winnerParty << ") with " << maxVotes << " votes" << endl << endl;
+						cout << yellow << "Winner of " << currentRegion << " REGION: " << winnerName << " (" << winnerParty << ") with " << maxVotes << " votes" << stop << endl << endl;
 					}
 					currentRegion = r;
 					cout << currentRegion << " REGION" << endl;
@@ -361,7 +367,7 @@ public:
 					maxVotes = v;
 				}
 			}
-			cout << "Winner of " << currentRegion << " REGION: " << winnerName << " (" << winnerParty << ") with " << maxVotes << " votes" << endl;
+			cout << yellow << "Winner of " << currentRegion << " REGION: " << winnerName << " (" << winnerParty << ") with " << maxVotes << " votes" << stop << endl;
 		}
 	}
 
@@ -369,38 +375,64 @@ public:
 class nationalElection :public election {
 	voters v;
 public:
-	void displaycandidates(string filename) override {
-		string n, r;
+	void displaycandidates(string filename) {
+		string name, region, stat, stat1;
 		int p;
-		long long c;
+		long long cnic;
 		ifstream file("voters.txt");
-		if (file >> n >> p >> c >> r) {
-			ifstream infile(filename);
-			if (infile) {
-				string name, party, region;
-				int votes;
-				cout << "The Candidates of " << r << " are following:\n";
-				int i = 1;
-				while (infile >> name >> party >> region >> votes) {
-					if (region == r) {
-						cout << i << ". " << name << " (" << party << ")" << endl;
-						i++;
+		while (file >> name >> p >> cnic >> region >> stat >> stat1) {
+			if (cnic == loggedINcnic) {
+				ifstream infile(filename);
+				if (infile) {
+					string candName, party, candRegion;
+					int votes;
+					cout << "The candidates of " << region << " are following:\n";
+					int i = 1;
+					while (infile >> candName >> party >> candRegion >> votes) {
+						if (candRegion == region) {
+							cout << i << ". " << candName << " (" << party << ")" << endl;
+							i++;
+						}
+					}
+					if (i == 1) {
+						cout << crimson << "No candidates found in this region." << stop << endl;
 					}
 				}
-				if (i == 1) {
-					cout << crimson << "No candidates found in this region." << stop << endl;
+				else {
+					cout << crimson << "Error reading candidates file." << stop << endl;
 				}
 			}
-			else {
-				cout << crimson << "Error reading candidates file." << stop << endl;
-			}
-		}
-		else {
-			cout << crimson << "Error reading voters file." << stop << endl;
 		}
 	}
 	void Result(string filename)override {
-
+		string n, p, r;
+		int v;
+		ifstream file(filename);
+		string currentRegion = "";
+		string winnerName;
+		string winnerParty;
+		int maxVotes = 0;
+		if (file) {
+			while (file >> n >> p >> r >> v) {
+				if (r != currentRegion) {
+					if (!currentRegion.empty()) {
+						cout << yellow << "Winner of " << currentRegion << " REGION: " << winnerName << " (" << winnerParty << ") with " << maxVotes << " votes" << stop << endl << endl;
+					}
+					currentRegion = r;
+					cout << currentRegion << " REGION" << endl;
+					winnerName = n;
+					winnerParty = p;
+					maxVotes = v;
+				}
+				cout << n << " " << p << " " << v << endl;
+				if (v > maxVotes) {
+					winnerName = n;
+					winnerParty = p;
+					maxVotes = v;
+				}
+			}
+			cout << yellow << "Winner of " << currentRegion << " REGION: " << winnerName << " (" << winnerParty << ") with " << maxVotes << " votes" << stop << endl;
+		}
 	}
 };
 void header() {
@@ -500,7 +532,7 @@ int main() {
 								if (choose == 1) {
 									bool s = v.viewvotestatus("Local.txt");
 									if (s) {
-										cout << "You have already catsed vote, Voter van Vote only ONCE";
+										cout << crimson << "You have already catsed vote, Voter van Vote only ONCE" << stop << endl;
 									}
 									else {
 										LocalElection l;
@@ -509,15 +541,15 @@ int main() {
 											v.castvote("Local.txt");
 											v.updateVoteStatus("Local.txt");
 										}
-										else cout << "Local elections has been ended, Wait for the result" << endl;
+										else cout << blue << "Local elections has been ended, Wait for the result" << stop << endl;
 									}
 								}
 								else if (choose == 2) {
 									bool s = v.viewvotestatus("Local.txt");
 									if (s) {
-										cout << "Your vote has been casted\n";
+										cout << green << "Your vote has been casted\n" << stop;
 									}
-									else cout << "You have not casted vote\n";
+									else cout << blue << "You have not casted vote\n" << stop;
 
 
 								}
@@ -535,7 +567,7 @@ int main() {
 								if (choose1 == 1) {
 									bool s = v.viewvotestatus("National.txt");
 									if (s) {
-										cout << "you have already casted the vote, Voter can only Vote ONCE" << endl;
+										cout << crimson << "You have already casted the vote, Voter can only Vote ONCE" << stop << endl;
 									}
 									else {
 										if (c1 == false) {
@@ -544,15 +576,15 @@ int main() {
 											v.castvote("National.txt");
 											v.updateVoteStatus("National.txt");
 										}
-										else cout << "National elections have been ended, Wait for the result";
+										else cout << blue << "National elections have been ended, Wait for the result" << endl << stop;
 									}
 								}
 								else if (choose1 == 2) {
 									bool s1 = v.viewvotestatus("National.txt");
 									if (s1) {
-										cout << "Your vote has been casted\n";
+										cout << green << "Your vote has been casted\n" << stop;
 									}
-									else cout << "You have not casted vote\n";
+									else cout << blue << "You have not casted vote\n" << stop;
 
 								}
 
@@ -610,8 +642,8 @@ int main() {
 							A.addcandidate("Local.txt");
 							break;
 						case 2:
-							bool c = A.EndElections();
-							if (c) {
+							A.EndElections("Local.txt");
+							if (c == true) {
 								int choice;
 								system("cls"); header();
 								cout << "1.Display Result" << endl;
@@ -626,6 +658,7 @@ int main() {
 								if (k == 1)
 									break;
 							}
+							else break;
 						}
 					}
 					else {
@@ -649,8 +682,8 @@ int main() {
 							break;
 						}
 						case 2: {
-							bool c1 = A.EndElections();
-							if (c1) {
+							A.EndElections("National.txt");
+							if (c1 == true) {
 								int choice;
 								system("cls"); header();
 								cout << "1.Display Result" << endl;
@@ -665,6 +698,7 @@ int main() {
 								if (k == 1)
 									break;
 							}
+
 						}
 						}
 					}
